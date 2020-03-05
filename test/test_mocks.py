@@ -207,5 +207,5 @@ def test_patching_location(time, trunc):
 
     time.return_value = 0
     trunc.return_value = 5
-
+    print('')
     process_transaction('1234', 500)
