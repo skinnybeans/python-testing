@@ -65,16 +65,16 @@ def test_patch_read_files():
 
 
 def test_patch_read_files_builtin():
-    ''' Patching the built in read() function can also be done
+    ''' Patching the built in open() function can also be done
     '''
     patcher = patch('builtins.open')
 
     # patcher.start actually returns a mock object to  manipulate
     mock = patcher.start()
 
-    # the read() function  returns a file object
+    # the open() function  returns a file object
     # so lets mock that as  well
-    returned_file_object = Mock(name='file-object')
+    returned_file_object = Mock(name='file-object')  # it possible to name mocks but not necessary
 
     # set the return value of the mock when it is called
     mock.return_value = returned_file_object
@@ -158,7 +158,7 @@ class Bank():
         self.accounts = {}
 
     def add_account(self, account_name):
-        if self.accounts.get(account_name, None) is not None:
+        if self.accounts.get(account_name, None) is not None:   # Throw an exception if the account name already exists
             raise Exception('Duplicate account!')
 
         self.accounts[account_name] = 0  # set balance of accounts to 0
@@ -169,13 +169,13 @@ class Bank():
 
 @patch('test_mocks.Bank.add_account')
 def test_mock_class(add_account):
-    ''' Functions in classes can be mocked as well
+    ''' Functions in classes can be patched with mock objects as well
     '''
     add_account.return_value = 'Yo I added something'
     my_bank = Bank()
 
     result = my_bank.add_account('myAccount')
-    print(f'\n {result}')
+    print(f'\n result: {result}')
 
     my_bank.add_account.assert_called_once()
 
@@ -196,6 +196,8 @@ def test_class_statically():
     print('\n mock bank accounts: %s' % (mock_bank.accounts))   # We still have the account with 5 in it
 
     print(f' exception info: {ex.value} ')
+
+    assert 'Duplicate account!' in str(ex.value)     # Can check the exception message contains the text we were expecting
 
 
 @patch('tutorial.transaction.trunc')    # As trunc is imported directly into transaction it must be patched there
